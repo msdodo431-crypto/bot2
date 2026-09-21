@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>МДК Поиск | Сардарлы Р. Р.</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #f0fdf4 0%, #ecfeff 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-start p-4 md:p-8 text-slate-800">
+
+    <div class="w-full max-w-2xl mt-8 md:mt-16 flex flex-col items-center">
+
+        <div class="w-full bg-white rounded-2xl border border-teal-100 shadow-lg p-6 md:p-8 mb-6">
+            <div class="flex items-center justify-between mb-5">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-slate-900">
+                        <span class="text-teal-600">МДК</span> Поиск
+                    </h1>
+                    <p class="text-xs text-slate-500 mt-1">База знаний студента</p>
+                </div>
+
+            <form id="searchForm" class="w-full relative" onsubmit="handleSearch(event)">
+                <div class="relative flex items-center rounded-xl overflow-hidden bg-slate-50 border border-slate-200 focus-within:border-teal-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-teal-100 transition-all">
+
+                    <div class="pl-4 text-teal-500">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        list="questionsDatalist" 
+                        placeholder="Введите номер или текст вопроса..." 
+                        class="w-full py-3.5 px-3 text-sm md:text-base text-slate-900 focus:outline-none bg-transparent placeholder-slate-400"
+                        autocomplete="off"
+                        required
+                    />
+
+                    <datalist id="questionsDatalist"></datalist>
+
+                    <button 
+                        type="submit" 
+                        class="mr-1.5 bg-teal-600 hover:bg-teal-700 text-white font-medium px-5 py-2.5 rounded-lg transition-colors duration-200 text-sm flex items-center gap-1.5 shadow-sm"
+                    >
+                        Найти
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div id="resultCard" class="w-full bg-white rounded-2xl border border-teal-100 shadow-lg p-6 md:p-8 hidden transition-all duration-300">
+
+            <div class="flex items-center justify-between gap-2 mb-4">
+                <span id="resTopic" class="text-xs font-semibold px-2.5 py-1 bg-cyan-50 text-cyan-800 rounded-md border border-cyan-100">
+
+                </span>
+                <span id="resAuthor" class="text-xs text-slate-500 font-medium">
+
+                </span>
+            </div>
+
+            <h2 id="resQuestion" class="text-lg md:text-xl font-bold text-slate-900 mb-3 leading-snug">
+
+            </h2>
+
+            <div id="resAnswer" class="text-slate-600 text-sm md:text-base leading-relaxed space-y-3 mb-6 p-4 bg-teal-50/40 rounded-xl border border-teal-50">
+
+            </div>
+
+
+            <div class="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs md:text-sm">
+                <span class="text-slate-400 flex items-center gap-1">
+                    <svg class="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                    Источник:
+                </span>
+                <a id="resSourceLink" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-teal-700 font-semibold hover:underline transition-colors">
+                    <span id="resSourceText">Перейти на сайт</span>
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+
+        const mdkDatabase = [
+            {
+                id: 33,
+                author: "Сардарлы Рустам Рафаэль-Оглы",
+                question: "33. Разработка технического задания на проектирование автоматизированной системы?",
+                topic: "Тема 1.2.3",
+                answer: "ТЗ на проектирование АС определяет цели, исходные данные, требования к системе, состав и содержание работ по созданию АС, а также порядок контроля и приемки (ГОСТ 34.602-89).",
+                sourceName: "КонсультантПлюс (ГОСТ 34.602-89)",
+                sourceUrl: "https://www.consultant.ru/cons/cgi/online.cgi?req=doc&base=EXP&n=382846"
+            },
+            {
+                id: 34,
+                author: "Сардарлы Рустам Рафаэль-Оглы",
+                question: "34. Порядок выбора мер по обеспечению безопасности персональных данных?",
+                topic: "Тема 1.7.1",
+                answer: "Выбор мер выполняется на основе установленного уровня защищенности ИСПДн (УЗ-1...УЗ-4) и базовых наборов мер согласно Приказу ФСТЭК № 21 с адаптацией под специфику системы.",
+                sourceName: "Роскомнадзор (Защита персданных)",
+                sourceUrl: "https://pd.rkn.gov.ru/"
+            }
+        ];
+
+
+        window.onload = function() {
+            const datalist = document.getElementById('questionsDatalist');
+            mdkDatabase.forEach((item) => {
+                const option = document.createElement('option');
+                option.value = `${item.id}. ${item.question.replace(/^\d+\.\s*/, '')}`;
+                datalist.appendChild(option);
+            });
+        };
+
+        function handleSearch(event) {
+            event.preventDefault();
+
+            const rawInput = document.getElementById('searchInput').value.trim();
+            if (!rawInput) return;
+
+            const resultCard = document.getElementById('resultCard');
+
+            let foundMatch = null;
+
+            if (/^\d+$/.test(rawInput)) {
+                const searchNumber = parseInt(rawInput, 10);
+                foundMatch = mdkDatabase.find(item => item.id === searchNumber);
+            } else {
+                const cleanQuery = rawInput.toLowerCase();
+                foundMatch = mdkDatabase.find(item => 
+                    item.question.toLowerCase().includes(cleanQuery) ||
+                    item.author.toLowerCase().includes(cleanQuery) ||
+                    item.topic.toLowerCase().includes(cleanQuery)
+                );
+            }
+
+            if (foundMatch) {
+                document.getElementById('resTopic').innerText = foundMatch.topic;
+                document.getElementById('resAuthor').innerText = foundMatch.author;
+                document.getElementById('resQuestion').innerText = foundMatch.question;
+                document.getElementById('resAnswer').innerHTML = `<p>${foundMatch.answer}</p>`;
+                
+                document.getElementById('resSourceText').innerText = foundMatch.sourceName;
+                document.getElementById('resSourceLink').href = foundMatch.sourceUrl;
+                resultCard.classList.remove('hidden');
+            } else {
+                resultCard.classList.add('hidden');
+                alert("По вашему запросу ничего не найдено.");
+            }
+        }
+    </script>
+</body>
+</html>

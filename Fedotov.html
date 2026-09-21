@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>МДК Поиск</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-start p-4 md:p-8 text-slate-800">
+
+    <div class="w-full max-w-2xl mt-8 md:mt-16 flex flex-col items-center">
+
+        <div class="w-full bg-white/80 backdrop-blur-md rounded-3xl border border-indigo-100 shadow-xl p-6 md:p-8 mb-6">
+
+            <div class="flex items-center justify-between mb-6">
+                <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
+                    <span class="bg-indigo-600 text-white text-sm px-3 py-1 rounded-xl uppercase tracking-wider font-bold">МДК</span> 
+                    Поиск
+                </h1>
+                <span class="text-xs font-semibold px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full border border-indigo-100">
+                    База знаний
+                </span>
+            </div>
+
+            <form id="searchForm" class="w-full relative" onsubmit="handleSearch(event)">
+                <div class="relative flex items-center shadow-inner rounded-2xl overflow-hidden bg-slate-50 border border-indigo-200/60 focus-within:border-indigo-600 focus-within:bg-white focus-within:ring-4 focus-within:ring-indigo-100 transition-all">
+
+                    <div class="pl-4 text-indigo-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        list="questionsDatalist" 
+                        placeholder="Введите запрос или номер вопроса..." 
+                        class="w-full py-4 px-4 text-base md:text-lg text-slate-900 focus:outline-none bg-transparent placeholder-slate-400"
+                        autocomplete="off"
+                        required
+                    />
+
+                    <datalist id="questionsDatalist"></datalist>
+
+                    <button 
+                        type="submit" 
+                        class="mr-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-2.5 rounded-xl transition-colors duration-200 flex items-center gap-2 shadow-md shadow-indigo-200"
+                    >
+                        Найти
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div id="resultCard" class="w-full bg-white rounded-3xl border border-indigo-100 shadow-xl p-6 md:p-8 hidden transition-all duration-300">
+
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 pb-4 border-b border-slate-100">
+                <span id="resAuthor" class="text-sm font-bold text-indigo-900 flex items-center gap-1.5">
+                    <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    Студент
+                </span>
+                <span id="resTopic" class="text-xs font-semibold px-3 py-1 bg-violet-50 text-violet-700 rounded-full border border-violet-100 w-fit">
+                    Тема МДК
+                </span>
+            </div>
+
+
+            <h2 id="resQuestion" class="text-xl md:text-2xl font-extrabold text-slate-900 mb-4 leading-snug">
+                Вопрос
+            </h2>
+
+            <div id="resAnswer" class="text-slate-600 text-base leading-relaxed space-y-3 mb-6 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-sm">
+                <span class="text-slate-400 flex items-center gap-1.5">
+                    <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                    Проверенный источник:
+                </span>
+                <a id="resSourceLink" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-indigo-600 font-bold hover:underline hover:text-indigo-800 transition-colors">
+                    <span id="resSourceText">Перейти на сайт</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+
+        const mdkDatabase = [
+            {
+                id: 41,
+                author: "Федотов Арсений Евгеньевич",
+                question: "41. Анализ угроз безопасности информации?",
+                topic: "Тема 1.3.4",
+                answer: "Определение источников угроз, возможных способов их реализации, вероятности наступления и степени потенциального ущерба для информационной системы.",
+                sourceName: "Методика оценки угроз (Safe-surf)",
+                sourceUrl: "https://safe-surf.ru/specialists/article/5289/666972/"
+            },
+            {
+                id: 42,
+                author: "Федотов Арсений Евгеньевич",
+                question: "42. Установка и настройка СЗИ от НСД?",
+                topic: "Тема 2.5.3",
+                answer: "Установка комплексов типа Secret Net, Dallas Lock, Astra Linux SE. Настройка замкнутой программной среды, блокировки клавиатуры/мыши при неактивности, аппаратных ключей (iButton, RuToken).",
+                sourceName: "Профессионалетитет (Документ ОПОП ИБ)",
+                sourceUrl: "https://www.nggpc.ru/images/files/professionalitet/2026/%D0%9E%D0%9F%D0%9E%D0%9F-%D0%9F__10.02.05_%D0%A1%D0%9E%D0%9E_2026.pdf"
+            }
+        ];
+
+
+        window.onload = function() {
+            const datalist = document.getElementById('questionsDatalist');
+            mdkDatabase.forEach((item) => {
+                const option = document.createElement('option');
+                option.value = `${item.id}. ${item.question.replace(/^\d+\.\s*/, '')}`;
+                datalist.appendChild(option);
+            });
+        };
+
+
+        function handleSearch(event) {
+            event.preventDefault();
+
+            const rawInput = document.getElementById('searchInput').value.trim();
+            if (!rawInput) return;
+
+            const resultCard = document.getElementById('resultCard');
+
+            let foundMatch = null;
+
+
+            if (/^\d+$/.test(rawInput)) {
+                const searchNumber = parseInt(rawInput, 10);
+                foundMatch = mdkDatabase.find(item => item.id === searchNumber);
+            } else {
+
+                const cleanQuery = rawInput.toLowerCase();
+                foundMatch = mdkDatabase.find(item => 
+                    item.question.toLowerCase().includes(cleanQuery) ||
+                    item.author.toLowerCase().includes(cleanQuery) ||
+                    item.topic.toLowerCase().includes(cleanQuery)
+                );
+            }
+
+            if (foundMatch) {
+                document.getElementById('resTopic').innerText = foundMatch.topic;
+                document.getElementById('resAuthor').innerHTML = `
+                    <svg class="w-4 h-4 text-indigo-500 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    ${foundMatch.author}
+                `;
+                document.getElementById('resQuestion').innerText = foundMatch.question;
+                document.getElementById('resAnswer').innerHTML = `<p>${foundMatch.answer}</p>`;
+                
+                document.getElementById('resSourceText').innerText = foundMatch.sourceName;
+                document.getElementById('resSourceLink').href = foundMatch.sourceUrl;
+                resultCard.classList.remove('hidden');
+            } else {
+
+                resultCard.classList.add('hidden');
+                alert("По вашему запросу ничего не найдено.");
+            }
+        }
+
+        function escapeHtml(string) {
+            return String(string).replace(/[&<>"']/g, function (s) {
+                return {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#39;'
+                }[s];
+            });
+        }
+    </script>
+</body>
+</html>
