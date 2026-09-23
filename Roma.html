@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поиск по вопросам</title>
+    <style>
+        :root {
+            --bg-color: #0a0e17;
+            --text-color: #e6edf3;
+            --input-bg: #161b22;
+            --button-bg: #238636;
+            --border-radius: 8px;
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-family);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .search-wrapper {
+            position: relative;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        input[type="text"] {
+            width: 70%;
+            max-width: 500px;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            border: 1px solid #30363d;
+            border-radius: var(--border-radius);
+            outline: none;
+            text-align: center;
+        }
+
+        input[type="text"]::placeholder {
+            color: #8b949e;
+        }
+
+        button {
+            padding: 0 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            background-color: var(--button-bg);
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            height: 52px;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #2ea043;
+        }
+
+        .result-area {
+            margin-top: 40px;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .answer-block {
+            background-color: var(--input-bg);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            border-left: 4px solid #58a6ff;
+            text-align: left;
+        }
+
+        .question-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #7ee787;
+        }
+
+        .answer-text {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 15px;
+            white-space: pre-wrap;
+            color: #c9d1d9;
+        }
+
+        .source-link {
+            display: inline-block;
+            color: #58a6ff;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dotted #58a6ff;
+        }
+
+        .source-link:hover {
+            color: #82b1ff;
+            border-bottom-style: solid;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 650px) {
+            .search-wrapper {
+                flex-direction: column;
+            }
+            input[type="text"], button {
+                width: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Введите номер вопроса (1 или 2)</h1>
+    
+    <div class="search-wrapper">
+        <input type="text" id="queryInput" placeholder="Например: 1">
+        <button id="searchBtn">Получить ответ</button>
+    </div>
+
+    <div id="resultArea" style="display: none;"></div>
+</div>
+
+<script>
+    const searchBtn = document.getElementById('searchBtn');
+    const queryInput = document.getElementById('queryInput');
+    const resultArea = document.getElementById('resultArea');
+
+    // База данных ваших вопросов из файла
+    const database = {
+        "1": {
+            title: "1. Порядок установки и ввода в эксплуатацию средств защиты информации в компьютерных сетях?",
+            answer: `Процесс включает следующие обязательные этапы:
+1. Проектирование системы защиты и разработка модели угроз.
+2. Закупка сертифицированных средств защиты информации (СЗИ).
+3. Инсталляция СЗИ на узлы компьютерной сети.
+4. Настройка параметров безопасности согласно техническому заданию.
+5. Проведение предварительных испытаний и опытной эксплуатации.
+6. Аттестация объекта информатизации (при необходимости).
+7. Оформление акта о вводе средств защиты в постоянную эксплуатацию.`,
+            source: "https://fstec.ru/dokumenty/vse-dokumenty/prikazy/prikaz-fstek-rossii-ot-11-fevralya-2013-g-17"
+        },
+        "2": {
+            title: "2. Понятие уязвимости угрозы?",
+            answer: `*   Уязвимость — это недостаток в системе (слабая парольная политика, отсутствие обновлений), который может быть использован для нарушения безопасности.
+*   Угроза — это потенциальная возможность реализации негативного воздействия. Она использует уязвимость как вектор атаки.
+*   Пример: Незакрытое окно в доме — это уязвимость. Желание грабителя проникнуть внутрь — это угроза. Само проникновение через это окно — реализация угрозы (атака).`,
+            source: "https://fstec.ru/dokumenty/vse-dokumenty/prikazy/prikaz-fstek-rossii-ot-11-fevralya-2013-g-17"
+        }
+    };
+
+    function showAnswer(questionKey) {
+        if (database[questionKey]) {
+            const data = database[questionKey];
+            resultArea.innerHTML = `
+                <div class="answer-block">
+                    <div class="question-title">${data.title}</div>
+                    <div class="answer-text">${data.answer}</div>
+                    <a href="${data.source}" target="_blank" class="source-link" rel="noopener noreferrer">Источник / Нормативная база →</a>
+                </div>
+            `;
+            resultArea.style.display = 'block';
+        } else {
+            resultArea.innerHTML = `
+                <div class="answer-block">
+                    <div class="answer-text" style="color:#ff7b72;">Вопрос не найден. Пожалуйста, введите число 1 или 2.</div>
+                </div>
+            `;
+            resultArea.style.display = 'block';
+        }
+    }
+
+    searchBtn.addEventListener('click', () => {
+        const val = queryInput.value.trim();
+        showAnswer(val);
+    });
+
+    queryInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            const val = queryInput.value.trim();
+            showAnswer(val);
+        }
+    });
+</script>
+
+</body>
+</html>
